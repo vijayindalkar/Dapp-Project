@@ -1,85 +1,163 @@
-let Ballot = artifacts.require("./Ballot.sol");
+let Auction = artifacts.require("./Auction.sol");
 
-let ballotInstance;
+let auctionInstance;
 
-contract('Ballot Contract', function (accounts) {
+contract('AuctionContract', function (accounts) {
   //accounts[0] is the default account
-  //Positive Test 1 
+  //Test case 1
   it("Contract deployment", function() {
-    return Ballot.deployed().then(function (instance) {
-      ballotInstance = instance;
-      assert(ballotInstance !== undefined, 'Ballot contract should be defined');
+    //Fetching the contract instance of our smart contract
+    return Auction.deployed().then(function (instance) {
+      //We save the instance in a gDlobal variable and all smart contract functions are called using this
+      auctionInstance = instance;
+      assert(auctionInstance !== undefined, 'Auction contract should be defined');
     });
   });
 
-  //Positive Test 2
-  it("Valid user registration", function() {
-    return ballotInstance.register(accounts[1], { from: accounts[0]}).then(function (result) {
-      assert.equal('0x01', result.receipt.status, 'Registration is valid');
-      return ballotInstance.register(accounts[2], { from: accounts[0]});
-    }).then(function (result) {
-      assert.equal('0x01', result.receipt.status, 'Registration is valid');
-      return ballotInstance.register(accounts[3], { from: accounts[0]});
+  //Sample Test Case
+  it("Should set bidders", function() {
+    return auctionInstance.register({from:accounts[1]}).then(function(result) {
+        return auctionInstance.getPersonDetails(0);
     }).then(function(result) {
-      assert.equal('0x01', result.receipt.status, 'Registration is valid');
-    });
+      assert.equal(result[2], accounts[1], 'bidder address set');
+    })
   });
 
-  //Positive Test 3
-  it("Valid voting", function() {
-    return ballotInstance.vote(2, {from: accounts[0]}).then(function (result) {
-      assert.equal('0x01', result.receipt.status, 'Voting is done');
-      return ballotInstance.vote(1, {from: accounts[1]});
-    }).then(function (result) {
-      assert.equal('0x01', result.receipt.status, 'Voting is done');
-      return ballotInstance.vote(1, {from: accounts[2]});
-    }).then(function (result) {
-      assert.equal('0x01', result.receipt.status, 'Voting is done');
-      return ballotInstance.vote(1, {from: accounts[3]});
-    }).then(function (result) {
-      assert.equal('0x01', result.receipt.status, 'Voting is done');
-    });
-  });
-
-  //Positive Test 4
-  it("Validate winner", function () {
-    return ballotInstance.winningProposal.call().then(function (result) {
-      assert.equal(1, result.toNumber(), 'Winner is validated with the expected winner');
-    });
-  });
-
-  //Negative Test 5
-  it("Should NOT accept unauthorized registration", function () {
-    return ballotInstance.register(accounts[6], { from: accounts[1]})
-	.then(function (result) {
-		/* 	If the user had handled the above mentioned failure case in solidity,
-			then this block will not be executed.
-			Truffle would directly throw the revert error which will be catched
-		*/
-		throw("Condition not implemented in Smart Contract");
+  //Test Case for checking if the bid is more than the token amount
+  it("Should NOT allow to bid more than remaining tokens", function() {
+    /**********
+    TASK 1:   Call bid method from accounts[1] of Auction.sol using auctionInstance and
+    pass itemId=0, count=6 as arguments
+    HINT:     To make a function call from account 1 use {from: accounts[1]} as an extra argument
+    ***********/
+    return /*<CODE HERE>*/
+    .then(function (result) {
+      /*
+      We are testing for a negative condition and hence this particular block will not have executed if our test case was correct. If this part is executed then we throw an error and catch the error to assert false
+      */
+      throw("Failed to check remaining tokens less than count");
     }).catch(function (e) {
-		/*	If the error is custom thrown then the condition was not checked and hence fail the test case
-			else pass the test case
-		*/
-		if(e === "Condition not implemented in Smart Contract") {
-			assert(false);
-		} else {
-			assert(true);
-		}
-	})
+      var a = e.toString();
+      if(e === "Failed to check remaining tokens less than count") {
+        /**********
+        TASK 2: This is the error which we had thrown. Should you assert true or false?
+        HINT:   Use assert(false) to assert false
+                Use assert(true) to assert true
+        ***********/
+        /*<CODE HERE>*/
+      } else {
+        /**********
+        TASK 3: assert the opposite here
+        ***********/
+        /*<CODE HERE>*/
+      }
+    })
   });
 
-  //Negative Test 6
-  it("Should NOT accept unregistered user vote", function () {
-    return ballotInstance.vote(1, {from: accounts[7]})
-		.then(function (result) {
-				throw("Condition not implemented in Smart Contract");
-    }).catch(function (e) {
-		if(e === "Condition not implemented in Smart Contract") {
-			assert(false);
-		} else {
-			assert(true);
-		}
-	})
+  //Modifier Checking
+  it("Should NOT allow non owner to reveal winners", function() {
+    /**********
+    TASK 4: Call revealWinners from account 1
+    ***********/
+     return /*<CODE HERE>*/
+     .then(function (instance) {
+       /*
+       We are testing for a negative condition and hence this particular block will not have executed if our test case was correct. If this part is executed then we throw an error and catch the error to assert false
+       */
+       throw("Failed to check owner in reveal winners");
+     }).catch(function (e) {
+       if(e === "Failed to check owner in reveal winners") {
+         /**********
+         TASK 5: This is the error which we had thrown. Should you assert true or false?
+         HINT:   Use assert(false) to assert false
+                 Use assert(true) to assert true
+         ***********/
+         /*<CODE HERE>*/
+       } else {
+         /**********
+         TASK 6: assert the opposite here
+         ***********/
+         /*<CODE HERE>*/
+       }
+     })
+   })
+
+
+  it("Should set winners", function() {
+    /**********
+    TASK 7: Call register function from account 2
+    ***********/
+    return /*<CODE HERE>*/
+    .then(function(result) {
+      /**********
+      TASK 8: Call register function from account 3
+      ***********/
+        return /*<CODE HERE>*/
+    }).then(function() {
+      /**********
+      TASK 9: Call register function from account 4
+      ***********/
+        return /*<CODE HERE>*/
+    }).then(function() {
+      /**********
+      TASK 10: Call bid method from accounts[2] of Auction.sol using auctionInstance and
+      pass itemId=0, count=5 as arguments
+      ***********/
+        return /*<CODE HERE>*/
+    }).then(function() {
+      /**********
+      TASK 11: Call bid method from accounts[3] of Auction.sol using auctionInstance and
+      pass itemId=1, count=5 as arguments
+      ***********/
+        return /*<CODE HERE>*/
+    }).then(function() {
+      /**********
+      TASK 12: Call bid method from accounts[4] of Auction.sol using auctionInstance and
+      pass itemId=2, count=5 as arguments
+      ***********/
+        return /*<CODE HERE>*/
+    }).then(function() {
+      /**********
+      TASK 13: Call revealWinners function from accounts[0]
+      ***********/
+        return /*<CODE HERE>*/
+    }).then(function() {
+      /**********
+      TASK 14: call winners function from accounts[0] to get the winner of item id 0
+      ***********/
+        return /*<CODE HERE>*/
+    }).then(function(result) {
+      /**********
+      TASK 15:  assert to see if the winner address is not the default address
+      HINT:     Default address is '0x0000000000000000000000000000000000000000'
+                Use notEqual method of assert
+                Parameters for notEqual : (result, default address , message);
+      ***********/
+      /*<CODE HERE>*/
+      /**********
+      TASK 16: call winners function from accounts[0] to get the winner of item id 1
+      ***********/
+      return auctionInstance.winners(1);
+    }).then(function(result) {
+      /**********
+      TASK 17:  assert to see if the winner address is not the default address
+      HINT:     Default address is '0x0000000000000000000000000000000000000000'
+                Use notEqual method of assert
+                Parameters for notEqual : (result, default address , message);
+      ***********/
+      /*<CODE HERE>*/
+      /**********
+      TASK 18: Call register function from account 3 to get the winner of item id 2
+      ***********/
+      return auctionInstance.winners(2);
+    }).then(function(result) {
+      /**********
+      TASK 19:  assert to see if the winner address is not the default address
+      HINT:     Default address is '0x0000000000000000000000000000000000000000'
+                Use notEqual method of assert
+                Parameters for notEqual : (result, default address , message);
+      ***********/
+      /*<CODE HERE>*/
+    })
   });
 });
